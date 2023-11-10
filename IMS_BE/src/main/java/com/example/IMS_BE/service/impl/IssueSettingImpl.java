@@ -33,7 +33,7 @@ public class IssueSettingImpl implements IssueSettingService {
 
     @Override
     public void deleteIssueSettingById(Long id) {
-
+        issueSettingRepository.deleteById(id);
     }
 
     @Override

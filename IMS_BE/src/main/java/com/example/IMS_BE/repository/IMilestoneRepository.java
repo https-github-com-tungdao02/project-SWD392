@@ -12,4 +12,5 @@ import java.util.List;
 public interface IMilestoneRepository extends JpaRepository<Milestone,Long>{
     
 List<Milestone> findAllByProject(Project project);
+    List<Milestone> findByClassesId(Long classId);
 }

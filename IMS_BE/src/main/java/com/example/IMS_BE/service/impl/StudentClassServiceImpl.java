@@ -13,16 +13,19 @@ import java.util.List;
 public class StudentClassServiceImpl implements IStudentClassService {
     @Autowired
     IStudentClassRepository studentClassRepository;
+
     @Override
     public List<StudentClass> getClassesByUser(User user) {
         return studentClassRepository.findAllByStudent(user);
     }
 
-    public void addStudentIntoClass(Classes classes,User student){
-        studentClassRepository.save(new StudentClass((long)0,student,classes));
+    public StudentClass getStudentClassById(Long id) {
+        return studentClassRepository.findById(id).orElse(null);
     }
 
-    public void kickStudent(long classId,long studentId){
-        studentClassRepository.deleteById(studentClassRepository.findByClassesIdAndStudentId(classId, studentId).orElseGet(null).getId());
+    public void addStudentIntoClass(Classes classes, User user) {
+    }
+
+    public void kickStudent(long classId, long id) {
     }
 }

@@ -18,12 +18,13 @@ public interface UserService {
 
     boolean checkLogin(String username, String password);
 
-    public User getUserByUsername(String username);
     Optional<User> findUserById(Long id);
     Optional<User> findById(int id);
     List<User> findUserList();
     List<User> findManagerList();
     public User registerUser(String username, String email, String phone, String password);
+    public User getUserByUsername(String username);
+    public String getRolesByUserName(String userName);
 
 }
 

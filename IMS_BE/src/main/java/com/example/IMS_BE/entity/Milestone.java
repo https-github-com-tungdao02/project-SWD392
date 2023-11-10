@@ -1,6 +1,7 @@
 package com.example.IMS_BE.entity;
 
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -24,8 +25,10 @@ public class Milestone {
     @JoinColumn(name = "class_id",nullable = false,referencedColumnName = "class_id")
     private  Classes classes;
     @Column(name = "start")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date startdate;
     @Column(name = "end")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date startend;
     public Milestone() {
     }

@@ -5,8 +5,6 @@ import com.example.IMS_BE.entity.Setting;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.stereotype.Service;
-
 public interface SettingService {
     List<Setting> getAllSettings();
 
@@ -32,5 +30,21 @@ public interface SettingService {
 
     void deleteAll();
 
-    List<Setting> findAllByType (String type);
+    List<Setting> findAllByType1(String type);
+    Setting updateSetting(Long id, Setting updatedSetting);
+
+    Setting getSettingById(Long id);
+
+    Setting saveSetting(Setting setting);
+
+    void deleteSetting(Long id);
+
+    List<String> getAllTypeOptions();
+
+    void deleteSettingById(Long id);
+
+    public List<String> getAllTypes();
+
+    public void deleteSelectedSettings(List<Long> ids);
+
 }

@@ -5,12 +5,33 @@
     <title>Edit Project</title>
     <!-- Thêm link đến Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Tùy chỉnh màu chữ và nền cho label và input */
+        label, input {
+            color: #333; /* Màu chữ */
+            background-color: #f8f9fa; /* Màu nền */
+        }
+
+        /* Tùy chỉnh màu cho các nút */
+        .btn {
+            background-color: #007BFF; /* Màu nền của nút */
+            color: #fff; /* Màu chữ trắng */
+        }
+
+        /* Tùy chỉnh màu cho các nút khi di chuột qua */
+        .btn:hover {
+            background-color: #0056b3; /* Màu nền khi di chuột qua */
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <h1 class="mt-4">Edit Project</h1>
     <form th:action="@{/projectmember/saveProject}" th:object="${project}" method="post">
-        <input type="hidden" th:field="*{id}" />
+        <input type="hidden" name="id" th:field="*{id}" />
+        <input type="hidden" name="classId" th:field="*{classes.id}" />
+
         <div class="form-group">
             <label for="name">Name:</label>
             <input type="text" id="name" th:field="*{name}" class="form-control" />
@@ -32,11 +53,16 @@
             </select>
         </div>
         <div>
-            <button type="submit">Save Project</button>
-            <button type="button" id="closeButton4">Close</button>
+            <button type="submit" class="btn">Save Project</button>
+            <button type="button" class="btn" onclick="goBack()">Close</button>
         </div>
     </form>
 </div>
 
 </body>
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
 </html>

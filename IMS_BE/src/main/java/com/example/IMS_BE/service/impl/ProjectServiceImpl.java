@@ -42,8 +42,9 @@ public class ProjectServiceImpl implements IProjectService {
         return projectRepository.findAllByClasses(classes);
     }
 
-    public List<Project> getProjectByClassId(Long id){
-        return null;
+    public List<Project> getProjectsByClassesId(Long classId) {
+        return projectRepository.findByClassesId(classId);
     }
+
 
 }

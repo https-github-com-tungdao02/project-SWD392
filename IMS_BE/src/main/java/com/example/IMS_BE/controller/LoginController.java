@@ -32,9 +32,9 @@ public class LoginController {
     private SettingService settingService;
 
 
-    @RequestMapping("")
+    @RequestMapping("/login")
     public String login(){
-        return "login";
+        return "Common/login";
     }
     @PostMapping("checklogin")
     public String checkLogin(ModelMap model, @RequestParam("username")String username, @RequestParam("password")String password,
@@ -42,16 +42,34 @@ public class LoginController {
         session = request.getSession();
         if(userService.checkLogin(username,password)){
             System.out.println("Login thanh cong");
-            session.setAttribute("USERNAME", username);
-            if(userService.isAdmin(username)) {
+            if(userService.getRolesByUserName(username).equalsIgnoreCase("admin")) {
+                session.setAttribute("USERNAME", username);
+                User user = userService.getUserByEmail(username);
                 List<Setting> settings = settingService.getAllSettings();
                 model.addAttribute("settings", settings);
-                return "admin_home";
-            }else{
+                return "Common/adminhome";
+            }else if (userService.getRolesByUserName(username).equalsIgnoreCase("student")){
+                User user = userService.getUserByEmail(username);
+                System.out.println(user);
+                session.setAttribute("USERNAME", username);
                 return "redirect:/issue/student";
+            }else if (userService.getRolesByUserName(username).equalsIgnoreCase("teamlead")){
+                User user = userService.getUserByEmail(username);
+                System.out.println(user);
+                session.setAttribute("USERNAME", username);
+                return "redirect:/issue/student"; //ae tu return ve trang cua minh
+            }else if (userService.getRolesByUserName(username).equalsIgnoreCase("teacher")){
+                User user = userService.getUserByEmail(username);
+                System.out.println(user);
+                session.setAttribute("USERNAME", username);
+                return "redirect:/issue/";//ae tu return ve trang cua minh
+            }else if (userService.getRolesByUserName(username).equalsIgnoreCase("manager")){
+                User user = userService.getUserByEmail(username);
+                System.out.println(user);
+                session.setAttribute("USERNAME", username);
+                return "redirect:/classes/classList";
             }
         }else{
-
             System.out.println("Login that bai");
             model.addAttribute("ERROR","Username or password not exist!!");
         }
@@ -68,10 +86,10 @@ public class LoginController {
             if (isAdmin) {
                 List<Setting> settings = settingService.getAllSettings();
                 modelMap.addAttribute("settings", settings);
-                return "admin_home";
+                return "Common/adminhome";
             }
         }
-        return "access_denied";
+        return "Common/accessdenied";
     }
 
 
@@ -79,14 +97,14 @@ public class LoginController {
     @GetMapping("logout")
     public String logout(HttpSession session){
         session.invalidate();
-        return "redirect:";
+        return "redirect:/login";
     }
 
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         model.addAttribute("user", new User());
-        return "register";
+        return "Common/register";
     }
 
 
@@ -97,105 +115,18 @@ public class LoginController {
 
         if (!password.equals(re_password)) {
             model.addAttribute("ERROR", "Re_password incorrect");
-            return "register";
+            return "Common/register";
         }
         try {
             userService.registerUser(username, email, phone, password);
             model.addAttribute("SUCCESS", "Đăng ký thành công, quay lại đăng nhập !!");
-            return "register";
+            return "Common/register";
         } catch (Exception e) {
             model.addAttribute("ERROR", "The user exist!!");
-            return "register";
+            return "Common/register";
         }
     }
 
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    @GetMapping("/login")
-//    public String login() {
-//        return "login";
-//    }
-//
-//    @PostMapping("/login")
-//    public String processLogin(@RequestParam String username, @RequestParam String password, Model model, HttpSession session) {
-//        if (userService.validateUser(username, password)) {
-//            session.setAttribute("username", username);
-//            return "redirect:/home";
-//        } else {
-//            model.addAttribute("error", "Tên người dùng hoặc mật khẩu không chính xác");
-//            return "login";
-//        }
-//    }
-//
-//    @GetMapping("/home")
-//    public String home(HttpSession session, Model model) {
-//        String username = (String) session.getAttribute("username");
-//        if (username != null) {
-//            model.addAttribute("username", username);
-//            return "home";
-//        } else {
-//            return "redirect:/login";
-//        }
-//    }
-//
-//    @GetMapping("/logout")
-//    public String logout(HttpSession session) {
-//        session.invalidate();
-//        return "redirect:/login";
-//    }
-
-

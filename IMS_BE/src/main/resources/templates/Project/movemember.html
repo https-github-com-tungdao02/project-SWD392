@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Move Member</title>
+    <!-- Thêm link đến Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Tùy chỉnh màu chữ và nền cho label và input */
+        label, input {
+            color: #333; /* Màu chữ */
+            background-color: #f8f9fa; /* Màu nền */
+        }
+
+        /* Tùy chỉnh màu cho các nút */
+        .btn {
+            background-color: #007BFF; /* Màu nền của nút */
+            color: #fff; /* Màu chữ trắng */
+        }
+
+        /* Tùy chỉnh màu cho các nút khi di chuột qua */
+        .btn:hover {
+            background-color: #0056b3; /* Màu nền khi di chuột qua */
+        }
+    </style>
+
+
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-4">Move Member</h1>
+    <form th:action="@{/projectmember/moveStudentFromProject}" th:object="${member}" method="post">
+        <input type="hidden" name="projectId" th:field="${member.id}" />
+        <input type="hidden"  name="studentId" th:field="*{user.id}" class="form-control" />
+        <div class="form-group">
+            <label>Name:</label>
+            <input type="text"  th:field="*{user.userName}" class="form-control" />
+
+        </div>
+
+        <div class="form-group">
+            <label>To Project:</label>
+            <select th:field="*{project.id}" name="movetoProjectId" class="form-control">
+                <option th:each="project : ${lstProject}" th:value="${project.id}" th:text="${project.name}"></option>
+            </select>
+        </div>
+
+        <div>
+            <button type="submit"  class="btn"  onclick="goBack()">Update</button>
+            <button type="button" class="btn" onclick="goBack()">Close</button>
+        </div>
+    </form>
+</div>
+</body>
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
+</html>

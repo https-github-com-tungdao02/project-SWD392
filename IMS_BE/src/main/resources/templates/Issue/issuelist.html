@@ -30,7 +30,7 @@
             color: #fff; /* Màu chữ trắng */
             padding-top: 20px;
             padding-bottom: 20px;
-            height: 100vh; /* Đặt chiều cao bằng chiều cao của màn hình (100% viewport height) */
+            height: 220vh; /* Đặt chiều cao bằng chiều cao của màn hình (100% viewport height) */
             overflow-y: auto; /* Thêm thanh cuộn nếu nội dung vượt quá chiều cao của thanh menu */
         }
 
@@ -95,10 +95,10 @@
             </div>
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link active" href="#">Mục 1</a>
+                    <a class="nav-link active" href="http://localhost:8080/issue/student">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Mục 2</a>
+                    <a class="nav-link" href="http://localhost:8080/issue/dashboard">Dashboard</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/logout">Log out</a>
@@ -142,7 +142,7 @@
                             <div class="issue" style="display: flex">
                                 <input type="checkbox" th:id="'checkbox-' + ${issue.id}" class="checkbox">
                                 <div style="margin-left: 20px">
-                                    <div class="issue-title" ><a th:text="${issue.title}" href="#"></a></div>
+                                    <div class="issue-title" ><a th:text="${issue.title}" th:href="'/issue/'+${issue.id}"></a></div>
                                     <div class="issue-assignee" th:text="'Project: ' + ${issue.project.name}"></div>
                                     <div class="issue-status" th:text="'Trạng thái: ' + ${issue.status.name}"></div>
                                     <div class="issue-category" th:text="'Thể loại: ' + ${issue.type.name}"></div>

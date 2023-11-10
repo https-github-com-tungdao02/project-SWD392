@@ -21,6 +21,7 @@
         <div class="form-group">
             <label for="classId">Class</label>
             <select class="form-control" id="classId" th:field="*{classes}" name="classId">
+                <option value="0">-none-</option>
                 <option th:each="class : ${listclass}" th:text="${class.classes.name}" th:value="${class.classes.id}"></option>
 
             </select>
@@ -28,8 +29,7 @@
         <div class="form-group">
             <label for="projectId">Project</label>
             <select class="form-control" id="projectId" th:field="*{project}" name="projectId" required>
-                <option value="1">Project 1</option>
-                <option value="2">Project 2</option>
+                <option value="0">-none-</option>
             </select>
         </div>
         <div class="row">
@@ -42,11 +42,11 @@
             <div class="form-group col-md-6">
                 <label for="milestoneId">Milestone</label>
                 <select class="form-control" id="milestoneId" th:field="*{milestone}" name="milestoneId" required>
-                    <option th:each="milestone : ${milestoneList}" th:text="${milestone.name}" th:value="${milestone.id}"></option>
+                    <option value="0">-none-</option>
                 </select>
             </div>
         </div>
-        <select class="form-control" id="processId" th:field="*{assigner}" name="processId" >
+        <select hidden class="form-control" id="assigner" th:field="*{assigner}" name="assigner" >
             <option th:text="${assignerissue.username}" th:value="${assignerissue.id}"></option>
 
         </select>
@@ -55,14 +55,14 @@
             <div class="form-group col-md-6">
                 <label for="processId">Process</label>
                 <select class="form-control" id="processId" th:field="*{issueSetting}" name="processId" required>
-                    <option th:each="process : ${processList}" th:text="${process.name}" th:value="${process.id}"></option>
+                    <option value="0">-none-</option>
 
                 </select>
             </div>
             <div class="form-group col-md-6">
                 <label for="statusId">Status</label>
                 <select class="form-control" id="statusId" th:field="*{status}" name="statusId" required>
-                    <option th:each="status : ${statusList}" th:text="${status.name}" th:value="${status.id}"></option>
+                    <option value="0">-none-</option>
                 </select>
             </div>
 
@@ -71,8 +71,7 @@
             <div class="form-group col-md-6">
                 <label for="typeId">Type</label>
                 <select class="form-control" id="typeId" th:field="*{type}" name="typeId" required>
-                    <option th:each="type : ${typeList}" th:text="${type.name}" th:value="${type.id}"></option>
-
+                    <option value="0">-none-</option>
                 </select>
             </div>
         </div>
@@ -80,5 +79,77 @@
         <a href="/issue/student"> <button type="button" class="btn btn-warning ">Back home</button></a>
     </form>
 </div>
+<script>
+    var classId=document.getElementById('classId');
+    var projectSelect = document.getElementById('projectId');
+    var milestoneList = document.getElementById('milestoneId');
+    var processList = document.getElementById('processId');
+    var statusList = document.getElementById('statusId');
+    var typeList = document.getElementById('typeId');
+    classId.addEventListener('change',function (){
+        var selected = classId.value;
+        fetch('http://localhost:8080/projectmember/api/getproject/' + selected)
+            .then(response => response.json())
+            .then(data => {
+                // Xử lý dữ liệu và hiển thị danh sách các mốc
+                var milestoneHtml = '<option value="0">-none-</option>';
+                data.forEach(milestone => {
+                    milestoneHtml += '<option value="'+milestone.id+'">' + milestone.name + '</option>';
+                });
+                milestoneHtml += '';
+                projectSelect.innerHTML = milestoneHtml;
+            });
+    });
+    projectSelect.addEventListener('change', function () {
+        var selectedProjectId = projectSelect.value; // Lấy giá trị của dự án đã chọn
+
+        // Gọi đến API để lấy danh sách các mốc của dự án đã chọn
+        fetch('http://localhost:8080/milestone/api/milestoneByProject/' + selectedProjectId)
+            .then(response => response.json())
+            .then(data => {
+                // Xử lý dữ liệu và hiển thị danh sách các mốc
+                var milestoneHtml = '';
+                data.forEach(milestone => {
+                    milestoneHtml += '<option value="'+milestone.id+'">' + milestone.name + '</option>';
+                });
+                milestoneHtml += '';
+                milestoneList.innerHTML = milestoneHtml;
+            });
+        fetch('http://localhost:8080/issue_setting/api/getbyprojectandtype?id='+selectedProjectId+'&type=status')
+            .then(response => response.json())
+            .then(data => {
+                // Xử lý dữ liệu và hiển thị danh sách các mốc
+                var milestoneHtml = '';
+                data.forEach(milestone => {
+                    milestoneHtml += '<option value="'+milestone.id+'">' + milestone.name + '</option>';
+                });
+                milestoneHtml += '';
+                statusList.innerHTML = milestoneHtml;
+            });
+        fetch('http://localhost:8080/issue_setting/api/getbyprojectandtype?id='+selectedProjectId+'&type=type')
+            .then(response => response.json())
+            .then(data => {
+                // Xử lý dữ liệu và hiển thị danh sách các mốc
+                var milestoneHtml = '';
+                data.forEach(milestone => {
+                    milestoneHtml += '<option value="'+milestone.id+'">' + milestone.name + '</option>';
+                });
+                milestoneHtml += '';
+                typeList.innerHTML = milestoneHtml;
+            });
+        fetch('http://localhost:8080/issue_setting/api/getbyprojectandtype?id='+selectedProjectId+'&type=process')
+            .then(response => response.json())
+            .then(data => {
+                // Xử lý dữ liệu và hiển thị danh sách các mốc
+                var milestoneHtml = '';
+                data.forEach(milestone => {
+                    milestoneHtml += '<option value="'+milestone.id+'">' + milestone.name + '</option>';
+                });
+                milestoneHtml += '';
+                processList.innerHTML = milestoneHtml;
+            });
+
+    });
+</script>
 </body>
 </html>

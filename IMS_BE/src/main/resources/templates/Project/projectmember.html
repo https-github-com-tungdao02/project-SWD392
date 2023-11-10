@@ -80,6 +80,37 @@
     table.table td .btn.manage:hover {
       background: #2e9c81;
     }
+    /* Tùy chỉnh bảng */
+    .custom-table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    /* Đường viền dưới cho hàng đầu tiên trong bảng */
+    .custom-table thead tr {
+      border-bottom: 2px solid #000;
+    }
+
+    /* Đường viền trên và dưới cho tất cả hàng (trừ hàng đầu) */
+    .custom-table tbody tr {
+      border-top: 1px solid #000;
+      border-bottom: 1px solid #000;
+    }
+
+    /* Đường viền bên phải cho từng ô trong bảng (trừ ô cuối cùng) */
+    .custom-table th,
+    .custom-table td {
+      border-right: 1px solid #000;
+      padding: 8px;
+      text-align: left;
+    }
+
+    /* Đường viền bên phải cho ô cuối cùng trong bảng */
+    .custom-table th:last-child,
+    .custom-table td:last-child {
+      border-right: none;
+    }
+
   </style>
   <script>
     $(document).ready(function(){
@@ -131,7 +162,7 @@
 <div class="table-wrapper">
   <div class="table-title">
     <div class="row">
-      <div class="col-sm"><h1>Project Management System</h1></div>
+      <div class="col-sm"><h1>Project Management</h1></div>
     </div>
   </div>
 </div>
@@ -139,7 +170,7 @@
 <!-- Nút "Add" để hiển thị biểu mẫu -->
 <button id="addButton">Add New Project</button>
 <button id="addButton2">Add Student</button>
-<button id="addButton4">Remove Student</button>
+<a th:href="@{'/classes/classList'}">Back to CLass</a>
 
 <!-- Biểu mẫu popup -->
 <div class="popup-form" id="addProjectForm">
@@ -186,10 +217,8 @@
 <div class="popup-form" id="addProjectForm2">
   <div class="popup-content">
     <h2>Add new student to project</h2>
-    <form th:action="@{/projectmember/saveStudentProject}" th:object="${studentProjectForm}" method="post">
-    <div>
-        <input type="hidden" th:field="*{id}" />
-      </div>
+    <form th:action="@{/projectmember/addStudentProject}" th:object="${studentProjectForm}" method="post">
+
       <div>
         <label>Project:</label>
         <select th:field="*{project.id}">
@@ -213,40 +242,11 @@
   </div>
 </div>
 
-<!--
-<div class="popup-form" id="addProjectForm4">
-  <div class="popup-content">
-    <h2>Remove student from project</h2>
-    <form th:action="@{/projectmember/removeStudent}" th:object="${studentProjectForm}" method="post">
-      <div>
-
-      </div>
-      <div>
-        <label>Project:</label>
-        <select th:field="*{project.id}">
-          <option th:each="project : ${lstProject}" th:value="${project.getId()}" th:text="${project.getName()}"></option>
-        </select>
-      </div>
-      <div>
-        <label>User:</label>
-        <select th:field="*{user.id}">
-          <option th:each="studentProject : ${studentProjects}" th:value="${studentProject.user.getId()}" th:text="${studentProject.user.username}"></option>
-        </select>
-      </div>
-      <div>
-        <button type="submit">Delete Student Project</button>
-        <button type="button" id="closeButton4">Close</button>
-      </div>
-    </form>
-  </div>
-</div>
--->
-
-<h1>Student Project List</h1>
-<table class="table table-striped table-hover">
+<table class="table table-striped table-hover custom-table">
   <thead>
   <tr>
     <th>No</th>
+    <th>Class Name</th>
     <th>Project Name</th>
     <th>Group Name</th>
     <th>Student Name</th>
@@ -260,48 +260,27 @@
 
   }">
     <td th:text="${studentProject.project.id}"></td>
-
+    <td><a th:href="@{'/classes/edit/' + ${studentProject.project.classes.id}}" th:text="${studentProject.project.classes.name}"></a></td>
     <td th:text="${studentProject.project.name}"></td>
+
     <td th:text="${studentProject.project.description}"></td>
     <td>
         <span th:each="project, stat : ${studentProjects}">
             <span th:if="${project.project.id == studentProject.project.id}">
                 <span th:text="${project.user.username}"></span>
-                <span th:if="${!stat.last}">,</span>
+                <span th:if="${!stat.last}"> </span>
             </span>
         </span>
     </td>
     <td th:text="${studentProject.project.user.username}"></td>
     <td>
-      <a th:href="@{'/projectmember/removeMember/' + ${studentProject.project.id}}">Remove member</a>
-      <a th:href="@{'/projectmember/editProject/' + ${studentProject.project.id}}" >Edit</a>
-      <a th:href="@{/studentproject/delete/{id}(id=${studentProject.project.getId()})}">Delete</a>
+
+      <a th:href="@{/projectmember/delete/{id}(id=${studentProject.project.getId()})}">Delete</a>
     </td>
   </tr>
 
   </tbody>
 </table>
-
-<!-- Biểu mẫu popup -->
-<div id="projectPopup" class="popup-form">
-  <div class="popup-content">
-    <h2>Edit Project</h2>
-    <form th:action="@{/studentproject/save}" th:object="${projectForm}" method="post">
-
-      <!-- Các trường chỉnh sửa -->
-      <div>
-        <label>Project Name</label><br/>
-        <input type="text" th:field="*{name}">
-      </div>
-
-      <!-- ... -->
-      <div>
-        <button type="submit">Save Student Project</button>
-        <button type="button" class="close-button" data-id="${studentProject.id}">Close</button>
-      </div>
-    </form>
-  </div>
-</div>
 
 
 

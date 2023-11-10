@@ -87,13 +87,11 @@ public class ClassesServiceImpl implements IClassesService {
     public Page<Classes> findAllClasses(Pageable pageable) {
         return _classesRepository.findAll(pageable);
     }
-
     @Override
     public List<Project> findProjectByClassId(long id){
         return _classesRepository.findProjectsByClassId(id);
     }
 
-    @Override
     public List<User> findUsersByClassId(long id){
         return _classesRepository.findUsersByClassId(id);
     }

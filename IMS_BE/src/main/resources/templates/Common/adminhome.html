@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Setting List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1 class="display-4 text-center mt-4 mb-4">Setting List</h1>
+
+    <form th:action="@{/delete-selected-settings}" method="post" onsubmit="return confirmDelete();">
+        <button style="float:right;" class="btn btn-danger" type="submit">Delete</button>
+        <a style="float:right;" class="btn btn-primary mb-3" href="/add-new">Add New</a>
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+            <tr>
+                <th>
+                    <input type="checkbox" id="selectAll">
+                </th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="setting : ${settings}">
+                <td>
+                    <input type="checkbox" name="selectedIds" th:value="${setting.id}" class="checkBox" />
+                </td>
+                <td>
+                    <a style="color:black;" th:href="@{'/edit/setting/' + ${setting.id} }" th:text="${setting.id}"></a>
+                </td>
+                <td>
+                    <a style="color:black;" th:href="@{'/edit/setting/' + ${setting.id} }" th:text="${setting.name}"></a>
+                </td>
+                <td>
+                    <a style="color:black;" th:href="@{'/edit/setting/' + ${setting.id} }" th:text="${setting.type}"></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+
+    <a class="btn btn-primary" href="/logout">Logout</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+<!--<a class="btn btn-info" th:href="@{'/edit/setting/' + ${setting.id}}">Edit</a>-->
+<script>
+    var selectAllCheckbox = document.getElementById('selectAll');
+    var checkBoxes = document.querySelectorAll('.checkBox');
+
+    selectAllCheckbox.addEventListener('change', function () {
+        for (var i = 0; i < checkBoxes.length; i++) {
+            checkBoxes[i].checked = selectAllCheckbox.checked;
+        }
+    });
+
+
+    function confirmDelete() {
+        var selectedCheckboxes = document.querySelectorAll('.checkBox:checked');
+        if (selectedCheckboxes.length === 0) {
+            alert("Please select at least one Setting to delete!!");
+            return false;
+        }
+        if (confirm("Are you sure you want to delete the selected settings?")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+</script>

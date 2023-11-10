@@ -43,7 +43,7 @@ public class SubjectController {
             page = ISubjectRepository.findAll(pageable);
         }
         model.addAttribute("page", page);
-        return "subject";
+        return "Subject/subject";
     }
 
     @GetMapping("/add")
@@ -52,7 +52,7 @@ public class SubjectController {
         model.addAttribute("managerList",managerList);
         Subject subject = new Subject();
         model.addAttribute("subject", subject);
-        return "subject_add";
+        return "Subject/subject_add";
         }
 
     @GetMapping("/details")

@@ -13,67 +13,73 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body">
-                    <form th:action="@{/issue/update}" th:object="${issue}" method="POST">
+                    <form th:action="@{/issue/student/update}" th:object="${issue}" method="POST">
+                        <div class="form-group">
+                            <label for="title">Id</label>
+                            <input type="text" class="form-control" th:value="${issue.id}" id="title" th:field="*{id}" required>
+                        </div>
                         <div class="form-group">
                             <label for="title">Title</label>
-                            <input type="text" class="form-control" id="title" th:field="*{title}" required>
+                            <input type="text" class="form-control" th:value="${issue.title}" id="title" th:field="*{title}" required>
                         </div>
                         <div class="form-group">
                             <label for="description">Description</label>
-                            <textarea class="form-control" id="description" th:field="*{description}" rows="3" ></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="project">Project</label>
-                            <select class="form-control" id="project" th:field="*{project}">
-                                <option value="1">Project 1</option>
-                                <option value="2">Project 2</option>
-                            </select>
+                            <textarea class="form-control" id="description" th:value="${issue.description}" th:field="*{description}" rows="3" ></textarea>
                         </div>
                         <div class="form-group">
                             <label for="class">Class</label>
-                            <select disabled class="form-control" id="class" th:field="*{class}">
-                                <option value="1">Class 1</option>
-                                <option value="2">Class 2</option>
+                            <select  class="form-control" id="class" th:field="*{classes}">
+                                <option th:value="${issue.classes.id}" selected th:text="${issue.classes.name}"></option>
+                                <option th:each="class : ${listclass}" th:text="${class.classes.name}" th:value="${class.classes.id}"></option>
+                            </select>
+                            <div class="form-group">
+                                <label for="project">Project</label>
+                                <select class="form-control" id="project" th:field="*{project}">
+                                    <option th:value="${issue.project.id}" th:text="${issue.project.name}"></option>
+                                    <option value="0">-none-</option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="assignee">Assignee</label>
+                            <select class="form-control" id="assignee" th:field="*{assigner}">
+                                <option th:value="${issue.assigner.id}" th:text="${issue.assigner.username}"></option>
                             </select>
                         </div>
-
                         <div class="form-group">
                             <label for="assignee">Assignee</label>
                             <select class="form-control" id="assignee" th:field="*{assignee}">
-                                <option value="1">User 1</option>
-                                <option value="2">User 2</option>
+                                <option th:value="${issue.assignee.id}" th:text="${issue.assignee.username}"></option>
+
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label for="milestone">Milestone</label>
                             <select class="form-control" id="milestone" th:field="*{milestone}">
-                                <option value="1">Milestone 1</option>
-                                <option value="2">Milestone 2</option>
+                                <option th:value="${issue.milestone.id}" th:text="${issue.milestone.name}"></option>
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label for="process">Process</label>
-                            <select class="form-control" id="process" th:field="*{process}">
-                                <option value="1">Process 1</option>
-                                <option value="2">Process 2</option>
+                            <select class="form-control" id="process" th:field="*{issueSetting}">
+                                <option th:value="${issue.issueSetting.id}" th:text="${issue.issueSetting.name}"></option>
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label for="status">Status</label>
                             <select class="form-control" id="status" th:field="*{status}">
-                                <option value="1">Status 1</option>
-                                <option value="2">Status 2</option>
+                                <option th:value="${issue.status.id}" th:text="${issue.status.name}"></option>
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label for="type">Type</label>
                             <select class="form-control" id="type" th:field="*{type}">
-                                <option value="1">Type 1</option>
-                                <option value="2">Type 2</option>
+                                <option th:value="${issue.type.id}" th:text="${issue.type.name}"></option>
                             </select>
                         </div>
 
@@ -85,8 +91,80 @@
         </div>
     </div>
     <div class="text-center mt-3">
-        <a href="/issues" class="btn btn-primary">Back to Issues</a>
+        <a href="/issue/student" class="btn btn-primary">Back to Issues</a>
     </div>
 </div>
+<script>
+    var classId=document.getElementById('class');
+    var projectSelect = document.getElementById('project');
+    var milestoneList = document.getElementById('Milestone');
+    var processList = document.getElementById('process');
+    var statusList = document.getElementById('status');
+    var typeList = document.getElementById('type');
+    classId.addEventListener('change',function (){
+        var selected = classId.value;
+        fetch('http://localhost:8080/projectmember/api/getproject/' + selected)
+            .then(response => response.json())
+            .then(data => {
+                // Xử lý dữ liệu và hiển thị danh sách các mốc
+                var milestoneHtml = '<option value="0">-none-</option>';
+                data.forEach(milestone => {
+                    milestoneHtml += '<option value="'+milestone.id+'">' + milestone.name + '</option>';
+                });
+                milestoneHtml += '';
+                projectSelect.innerHTML = milestoneHtml;
+            });
+    });
+    projectSelect.addEventListener('change', function () {
+        var selectedProjectId = projectSelect.value; // Lấy giá trị của dự án đã chọn
+
+        // Gọi đến API để lấy danh sách các mốc của dự án đã chọn
+        fetch('http://localhost:8080/milestone/api/milestoneByProject/' + selectedProjectId)
+            .then(response => response.json())
+            .then(data => {
+                // Xử lý dữ liệu và hiển thị danh sách các mốc
+                var milestoneHtml = '';
+                data.forEach(milestone => {
+                    milestoneHtml += '<option value="'+milestone.id+'">' + milestone.name + '</option>';
+                });
+                milestoneHtml += '';
+                milestoneList.innerHTML = milestoneHtml;
+            });
+        fetch('http://localhost:8080/issue_setting/api/getbyprojectandtype?id='+selectedProjectId+'&type=status')
+            .then(response => response.json())
+            .then(data => {
+                // Xử lý dữ liệu và hiển thị danh sách các mốc
+                var milestoneHtml = '';
+                data.forEach(milestone => {
+                    milestoneHtml += '<option value="'+milestone.id+'">' + milestone.name + '</option>';
+                });
+                milestoneHtml += '';
+                statusList.innerHTML = milestoneHtml;
+            });
+        fetch('http://localhost:8080/issue_setting/api/getbyprojectandtype?id='+selectedProjectId+'&type=type')
+            .then(response => response.json())
+            .then(data => {
+                // Xử lý dữ liệu và hiển thị danh sách các mốc
+                var milestoneHtml = '';
+                data.forEach(milestone => {
+                    milestoneHtml += '<option value="'+milestone.id+'">' + milestone.name + '</option>';
+                });
+                milestoneHtml += '';
+                typeList.innerHTML = milestoneHtml;
+            });
+        fetch('http://localhost:8080/issue_setting/api/getbyprojectandtype?id='+selectedProjectId+'&type=process')
+            .then(response => response.json())
+            .then(data => {
+                // Xử lý dữ liệu và hiển thị danh sách các mốc
+                var milestoneHtml = '';
+                data.forEach(milestone => {
+                    milestoneHtml += '<option value="'+milestone.id+'">' + milestone.name + '</option>';
+                });
+                milestoneHtml += '';
+                processList.innerHTML = milestoneHtml;
+            });
+
+    });
+</script>
 </body>
 </html>

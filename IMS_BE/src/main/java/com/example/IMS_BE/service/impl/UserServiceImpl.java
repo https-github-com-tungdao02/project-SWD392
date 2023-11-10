@@ -25,7 +25,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     SettingRepository settingRepository;
 
-
     public Optional<User> findByPhone(String phone) {
         return Optional.ofNullable(userRepository.findByPhone(phone));
     }
@@ -74,6 +73,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String getRolesByUserName(String userName) {
+        return userRepository.findRolesByEmail(userName);
+    }
+
+    @Override
     public Optional<User> findUserById(Long id) {
         return userRepository.findById(id);
     }
@@ -102,7 +106,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User registerUser(String username, String email, String phone, String password) {
-        return null;
+        if (userRepository.findByUsername(username) != null || userRepository.findByEmail(email) != null || userRepository.findByEmail(phone) != null) {
+            throw new RuntimeException("Người dùng đã tồn tại");
+        }
+        try {
+            Setting defaultRole = settingRepository.findBySettingId(2L);
+            User newUser = new User();
+            newUser.setUsername(username);
+            newUser.setEmail(email);
+            newUser.setPhone(phone);
+            newUser.setPassword(password);
+            newUser.setRole(defaultRole);
+
+            return userRepository.save(newUser);
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi đăng ký người dùng: " + e.getMessage());
+        }
     }
 
 

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Milestones</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Tùy chỉnh màu chữ và nền cho label và input */
+        label, input {
+            color: #333; /* Màu chữ */
+            background-color: #f8f9fa; /* Màu nền */
+        }
+
+        /* Tùy chỉnh màu cho các nút */
+        .btn {
+            background-color: #007BFF; /* Màu nền của nút */
+            color: #fff; /* Màu chữ trắng */
+        }
+
+        /* Tùy chỉnh màu cho các nút khi di chuột qua */
+        .btn:hover {
+            background-color: #0056b3; /* Màu nền khi di chuột qua */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-4">Edit Milestones</h1>
+    <form th:action="@{/milestone/saveMilestone}" th:object="${milestoneform}" method="post">
+        <input type="hidden" name="id" th:field="*{id}" />
+        <input type="hidden"  name="projectid" th:field="*{project.id}" />
+        <input type="hidden"  name="classId" th:field="*{classes.id}" />
+
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" th:field="*{name}" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <input type="text" id="description" th:field="*{description}" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="description">Status:</label>
+            <input type="text" id="status" th:field="*{status}" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="startdate">Starte Date:</label>
+            <input type="datetime-local" id="startdate" th:field="*{startdate}" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="enddate">End Date:</label>
+            <input type="datetime-local" id="enddate" th:field="*{startend}" class="form-control" />
+        </div>
+
+        <div>
+            <button type="submit" class="btn">Save Milestone</button>
+            <button type="button" class="btn" onclick="goBack()">Close</button>
+        </div>
+    </form>
+</div>
+
+</body>
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
+</html>

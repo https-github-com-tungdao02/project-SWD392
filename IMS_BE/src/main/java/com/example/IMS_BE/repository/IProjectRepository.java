@@ -12,6 +12,8 @@ import java.util.List;
 public interface IProjectRepository extends JpaRepository<Project,Long> {
 List<Project> findAllByClasses(Classes classes);
 
+    List<Project> findByClassesId(Long classId);
+
     // public java.util.List<Project> getProjectByClassId(Long id);
 
 }

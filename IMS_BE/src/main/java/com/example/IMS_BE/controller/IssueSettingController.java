@@ -13,7 +13,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/issue_setting")
@@ -34,7 +36,7 @@ public class IssueSettingController {
         List<IssueSetting> issueSettings = issueSettingService.getAllIssueSetting();
         model.addAttribute("issueSettings", issueSettings);
 
-        return "issue_setting";
+        return "IssueSetting/issuesetting";
     }
 
     @GetMapping("/add")
@@ -48,7 +50,7 @@ public class IssueSettingController {
         IssueSetting issueSetting = new IssueSetting();
         model.addAttribute("issueSetting", issueSetting);
 
-        return "issue_setting_add";
+        return "IssueSetting/issuesettingadd";
     }
 
     @PostMapping("/add")
@@ -56,6 +58,45 @@ public class IssueSettingController {
         issueSettingService.saveIssueSetting(issueSetting);
         return "redirect:/issue_setting/list";
     }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.GET)
+    public String deleteIssueSetting(@RequestParam("id") Long issueSettingId, Model model) {
+        issueSettingService.deleteIssueSettingById(issueSettingId);
+        return "redirect:/issue_setting/list";
+    }
+
+
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    public String editUser(@RequestParam("id") Long issueSettingId, Model model) {
+        List<Project> projectList = projectService.getAllProjects();
+        List<Subject> subjectList = subjectService.getAllSubject();
+        List<Classes> classesList = classesService.GetAllClasses();
+        model.addAttribute("projectList",projectList );
+        model.addAttribute("subjectList",subjectList );
+        model.addAttribute("classesList",classesList );
+        Optional<IssueSetting> issueSettingEdit = issueSettingService.findIssueSettingById(issueSettingId);
+        issueSettingEdit.ifPresent(issueSetting -> model.addAttribute("issueSetting", issueSetting));
+        return "IssueSetting/issuesettingdetails";
+    }
+
+    @RequestMapping(value = "save", method = RequestMethod.POST)
+    public String save(IssueSetting issueSetting) {
+        if (issueSetting.getId() != null) {
+            IssueSetting existingIssueSetting = issueSettingService.findIssueSettingById(issueSetting.getId()).orElse(null);
+            if (existingIssueSetting != null) {
+                existingIssueSetting.setName(issueSetting.getName());
+                existingIssueSetting.setType(issueSetting.getType());
+                issueSettingService.saveIssueSetting(existingIssueSetting);
+            }
+        } else {
+            issueSettingService.saveIssueSetting(issueSetting);
+        }
+        return "redirect:/issue_setting/list";
+    }
+
+
+
+
     @ResponseBody
     @GetMapping("/api/getbyprojectandtype")
     public ResponseEntity<List<IssueSetting>> getByProjectAndType(@PathParam("projectid") Long id,@PathParam("type")String type){

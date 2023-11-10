@@ -1,15 +1,13 @@
 package com.example.IMS_BE.controller;
 
-import com.example.IMS_BE.entity.Classes;
-import com.example.IMS_BE.entity.Project;
-import com.example.IMS_BE.entity.Setting;
-import com.example.IMS_BE.entity.Subject;
-import com.example.IMS_BE.entity.User;
-import com.example.IMS_BE.service.IClassesService;
+import com.example.IMS_BE.entity.*;
+import com.example.IMS_BE.service.MilestoneService;
 import com.example.IMS_BE.service.SettingService;
+
+import com.example.IMS_BE.service.impl.*;
+import com.example.IMS_BE.service.impl.ProjectServiceImpl;
 import com.example.IMS_BE.service.SubjectService;
 import com.example.IMS_BE.service.impl.StudentClassServiceImpl;
-import com.example.IMS_BE.service.impl.UserServiceImpl;
 
 import java.util.List;
 
@@ -29,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/classes")
 public class ClassesController {
     @Autowired
-    private IClassesService _classesService;
+    private ClassesServiceImpl _classesService;
+    @Autowired
+    private ProjectServiceImpl projectService;
     @Autowired
     private SettingService _settingService;
     @Autowired
@@ -38,6 +38,10 @@ public class ClassesController {
     private SubjectService subjectService;
     @Autowired
     private StudentClassServiceImpl studentsClassService;
+    @Autowired
+    private StudentProjectService studentProjectService;
+    @Autowired
+    MilestoneService milestoneService;
 
 
     @GetMapping("/classList")
@@ -52,18 +56,18 @@ public class ClassesController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", classPage.getTotalPages());
         model.addAttribute("list", classPage.getContent());
-        return "Class/ClassesList";
+        return "Class/classeslist";
     }
     @GetMapping("/create")
     public String showCreateForm(Model model) {
-        List<Setting> setting = _settingService.findAllByType("semester");
+        List<Setting> setting = _settingService.findAllByType1("semester");
         List<User> users = _userService.findAllByRole(4);
         List<Subject> subject = subjectService.getAllSubject();
         model.addAttribute("newClass", new Classes());
         model.addAttribute("newSetting", setting);
         model.addAttribute("classSubject", subject);
         model.addAttribute("teachers", users);
-        return "Class/CreateClass";
+        return "Class/createclass";
     }
 
     @PostMapping("/create")
@@ -86,20 +90,40 @@ public class ClassesController {
 
     @GetMapping("/edit/{id}")
     public String editClass(@PathVariable Long id, Model model) {
-        List<Setting> setting = _settingService.findAllByType("semester");
+        Project formModel = new Project();
+
+        List<Setting> setting = _settingService.findAllByType1("semester");
         List<User> users = _userService.findAllByRole(4);
         List<Subject> subject = subjectService.getAllSubject();
         Classes classToEdit = _classesService.getClassById(id);
-        List<Project> classProject = _classesService.findProjectByClassId(id);
+
+        List<Project> classProject =  projectService.getProjectsByClassesId(id);
+        StudentProject studentProjectForm = studentProjectService.getStudentProjectById(id);
+        List<Project> projects = projectService.getAllProjects();
         List<User> students = _classesService.findUsersByClassId(id);
+
+       //Milestone
+        //List<Milestone> milestoneList = milestoneService.getAllMilestone();
+        List<Milestone> milestoneList = milestoneService.findMilestonesByClassId(id);
+
         model.addAttribute("classToEdit", classToEdit);
         model.addAttribute("classSubject", subject);
         model.addAttribute("teachers", users);
         model.addAttribute("newSetting", setting);
         model.addAttribute("classProject", classProject);
         model.addAttribute("classStudent", students);
-        return "Class/EditClass";
+        model.addAttribute("lstProject", projects);
+
+        model.addAttribute("lstMilestone", milestoneList);
+
+
+        List<Classes> classes = _classesService.GetAllClasses();
+        model.addAttribute("lstClass", classes);
+        model.addAttribute("projectForm", formModel); // Truyền đối tượng Project mới
+        model.addAttribute("studentProjectForm", studentProjectForm);
+        return "Class/editclass";
     }
+
 
     @PostMapping("/update")
     public String updateClass(@ModelAttribute Classes classToEdit) {
@@ -107,15 +131,15 @@ public class ClassesController {
         return "redirect:edit/" + classToEdit.getId();
     }
 
+
     @GetMapping("/deleteCancel/{id}")
     public String deleteOrCancel(@PathVariable Long id, Model model) {
         Classes classes = _classesService.getClassById(id);
         Classes classToEdit = _classesService.getClassById(id);
         model.addAttribute("classDetails", classes);
         model.addAttribute("classModel", classToEdit);
-        return "Class/DeleteOrCancelClass";
+        return "Class/deleteorcancelclass";
     }
-
 
     @PostMapping("/delete-cancel")
     public String deleteClass(@ModelAttribute Classes classModel) {
